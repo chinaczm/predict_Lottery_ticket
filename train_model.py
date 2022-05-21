@@ -28,7 +28,7 @@ else:
     print("[INFO] 训练数据已加载! ")
 
 
-def create_train_data(name, windows, ball_num=6):
+def create_train_data(name, windows, ball_num=13):
     """ 创建训练数据
     :param name: 红/蓝 球
     :param windows: 训练窗口

@@ -8,8 +8,7 @@ URL = "https://datachart.500.com/ssq/history/"
 path = "newinc/history.php?start={}&end="
 
 BOLL_NAME = [
-    ("红球", "red"),
-    ("蓝球", "blue")
+    ("红球", "red")
 ]
 
 train_data_path = "data/"
@@ -18,10 +17,10 @@ train_data_file = "data.csv"
 # 模型相关参数
 windows_size = 3
 batch_size = 1
-sequence_len = 6
-red_n_class = 33
+sequence_len = 13
+red_n_class = 4322
 red_epochs = 1
-red_embedding_size = 32
+red_embedding_size = 4321
 red_hidden_size = 32
 red_layer_size = 1
 blue_n_class = 16
