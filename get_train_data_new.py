@@ -9,32 +9,56 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from config import *
-
+import datetime
+hanzi_arr = ['红', '红', '绿', '黑', '无']
 hanzi_dict = {
     "红": 1,
+    '1': "红",
+    '0': "红",
     "绿": 2,
+    '2': "绿",
     "黑": 3,
+    '3': "黑",
     "无": 4,
+    '4': "无",
     "追红": 1,
+    '1': "追红",
     "追绿": 2,
+    '2': "追绿",
     "杀红": 3,
-    "杀绿": 4
+    '3': "杀红",
+    "杀绿": 4,
+    '4': "杀绿",
 }
 
 aim_dict = {
+    '追红': 1,
     '杀红杀绿': 1,
+    '1': '杀红杀绿',
     '杀红追绿': 2,
+    '2': '杀红追绿',
     '杀红追绿杀绿': 3,
+    '3': '杀红追绿杀绿',
     '杀绿杀红': 4,
+    '4': '杀绿杀红',
     '杀绿追红': 5,
+    '5': '杀绿追红',
     '杀绿追红杀红': 6,
+    '6': '杀绿追红杀红',
     '追红杀绿': 7,
+    '7': '追红杀绿',
     '追红追绿': 8,
+    '8': '追红追绿',
     '追红追绿杀绿': 9,
+    '9': '追红追绿杀绿',
     '追绿杀红': 10,
+    '10': '追绿杀红',
     '追绿追红': 11,
+    '11': '追绿追红',
     '追绿追红杀红': 12,
-    '追绿追红杀绿杀红': 13
+    '12': '追绿追红杀红',
+    '追绿追红杀绿杀红': 13,
+    '13': '追绿追红杀绿杀红',
 }
 
 
@@ -122,6 +146,56 @@ def spider(mode, date_list):
     elif mode == "predict":
         return pd.DataFrame(data)
 
+def spider_predict(mode):
+    """ 爬取历史数据
+    :param start 开始一期
+    :param end 最近一期
+    :param mode 模式
+    :return:
+    """
+    dt = str(datetime.date.today())
+    trs = get_current_number(dt)
+    data = []
+    first_issue = 0
+    last_issue = 0
+    index = 0
+    for tr in trs:
+        if index == 0:
+            first_issue = int(tr['issue'])
+        if index == len(trs) - 1 :
+            last_issue = int(tr['issue'])
+        index += 1
+        item = [hanzi_dict[str(tr['arrowColor'])], hanzi_dict[str(tr['grapesColor'])], hanzi_dict[str(tr['trainColor'])],
+                                          hanzi_dict[str(tr['treeColor'])], tr['bettingNum_zh'] + 10, tr['rightNum_zh'] + 10,
+                                          tr['wrongNum_zh'] + 10, tr['realRightNum_zh'] + 10, tr['bettingNum_zl'] + 10,
+                                          tr['rightNum_zl'] + 10, tr['wrongNum_zl'] + 10, tr['realRightNum_zl'] + 10,
+                                          aim_dict[tr['aimThis'].replace(",", "")]]
+        data.append(item)
+        #index += 1
+        #if index >= 3:
+        #    break
+
+    if mode == "train":
+        df = pd.DataFrame(data)
+        df.to_csv("{}{}".format(train_data_path, "data.csv"), encoding="utf-8")
+    elif mode == "predict":
+        return data
+
+def get_latest_issue():
+    """ 爬取历史数据
+    :param start 开始一期
+    :param end 最近一期
+    :param mode 模式
+    :return:
+    """
+    dt = str(datetime.date.today())
+    trs = get_current_number(dt)
+    index = 0
+    for tr in trs:
+        if index == 0:
+            first_issue = int(tr['issue'])
+            break
+    return first_issue
 
 if __name__ == "__main__":
     print("[INFO] 正在获取数据。。。")
@@ -130,5 +204,6 @@ if __name__ == "__main__":
     # all_date_list = date_list_2020 + date_list_2021
     all_date_list = getAllDayPerYear("2022")
     # print(all_date_list)
-    spider('train', all_date_list)
+    #spider('train', all_date_list)
+    spider_predict('predict')
     print("[INFO] 数据获取完成，请查看data/data.csv文件。")
