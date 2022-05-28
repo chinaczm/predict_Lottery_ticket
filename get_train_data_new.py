@@ -21,6 +21,22 @@ hanzi_dict = {
     "杀绿": 4
 }
 
+aim_dict = {
+    '杀红杀绿': 1,
+    '杀红追绿': 2,
+    '杀红追绿杀绿': 3,
+    '杀绿杀红': 4,
+    '杀绿追红': 5,
+    '杀绿追红杀红': 6,
+    '追红杀绿': 7,
+    '追红追绿': 8,
+    '追红追绿杀绿': 9,
+    '追绿杀红': 10,
+    '追绿追红': 11,
+    '追绿追红杀红': 12,
+    '追绿追红杀绿杀红': 13
+}
+
 
 def isLeapYear(years):
     '''
@@ -64,7 +80,7 @@ def get_current_number(date):
     """ 获取最新一天的数字
     :return: int
     """
-    r = requests.get("{}".format("http://112.124.38.182:7529/lottery-api/api/ml/machineLearningTrain3?date="+date))
+    r = requests.get("{}".format("http://112.124.38.182:7529/lottery-api/api/ml/machineLearningTrain3?date=" + date))
     json_obj = json.loads(r.content)
     single_data = json_obj['data']
     return single_data
@@ -89,15 +105,15 @@ def spider(mode, date_list):
         item[u"红球号码_2"] = hanzi_dict[str(tr['grapesColor'])]
         item[u"红球号码_3"] = hanzi_dict[str(tr['trainColor'])]
         item[u"红球号码_4"] = hanzi_dict[str(tr['treeColor'])]
-        item[u"红球号码_5"] = str(tr['bettingNum_zh']+10).strip()
-        item[u"红球号码_6"] = str(tr['rightNum_zh']+10).strip()
-        item[u"红球号码_7"] = str(tr['wrongNum_zh']+10).strip()
-        item[u"红球号码_8"] = str(tr['realRightNum_zh']+10).strip()
-        item[u"红球号码_9"] = str(tr['bettingNum_zl']+10).strip()
-        item[u"红球号码_10"] = str(tr['rightNum_zl']+10).strip()
-        item[u"红球号码_11"] = str(tr['wrongNum_zl']+10).strip()
-        item[u"红球号码_12"] = str(tr['realRightNum_zl']+10).strip()
-        item[u"红球号码_13"] = tr['aimThis'].replace(",","").replace("追红","1").replace("追绿","2").replace("杀红","3").replace("杀绿","4")
+        item[u"红球号码_5"] = str(tr['bettingNum_zh'] + 10).strip()
+        item[u"红球号码_6"] = str(tr['rightNum_zh'] + 10).strip()
+        item[u"红球号码_7"] = str(tr['wrongNum_zh'] + 10).strip()
+        item[u"红球号码_8"] = str(tr['realRightNum_zh'] + 10).strip()
+        item[u"红球号码_9"] = str(tr['bettingNum_zl'] + 10).strip()
+        item[u"红球号码_10"] = str(tr['rightNum_zl'] + 10).strip()
+        item[u"红球号码_11"] = str(tr['wrongNum_zl'] + 10).strip()
+        item[u"红球号码_12"] = str(tr['realRightNum_zl'] + 10).strip()
+        item[u"红球号码_13"] = aim_dict[tr['aimThis'].replace(",", "")]
         data.append(item)
 
     if mode == "train":
@@ -109,10 +125,10 @@ def spider(mode, date_list):
 
 if __name__ == "__main__":
     print("[INFO] 正在获取数据。。。")
-    #date_list_2021 = getAllDayPerYear("2021")
-    #date_list_2020 = getAllDayPerYear("2020")
-    #all_date_list = date_list_2020 + date_list_2021
-    all_date_list = ['2022-05-08']
-    print(all_date_list)
+    # date_list_2021 = getAllDayPerYear("2021")
+    # date_list_2020 = getAllDayPerYear("2020")
+    # all_date_list = date_list_2020 + date_list_2021
+    all_date_list = getAllDayPerYear("2022")
+    # print(all_date_list)
     spider('train', all_date_list)
     print("[INFO] 数据获取完成，请查看data/data.csv文件。")
